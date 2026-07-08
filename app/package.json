@@ -1,0 +1,9 @@
+{
+  "name": "simple-k8s-node-app",
+  "version": "1.0.0",
+  "description": "Simple Node.js HTTP app for Kubernetes deployment assessment",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  }
+}

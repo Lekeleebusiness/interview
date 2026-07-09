@@ -26,10 +26,9 @@ jobs:
         run: |
           docker build \
             -t $IMAGE_NAME:${{ github.sha }} \
-            -t $IMAGE_NAME:latest \
             ./app
 
       - name: Push Docker image
         run: |
           docker push $IMAGE_NAME:${{ github.sha }}
-          docker push $IMAGE_NAME:latest
+     

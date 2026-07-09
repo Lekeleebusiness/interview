@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cardmarket-app
+  namespace: cardmarket
+  labels:
+    app: cardmarket-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cardmarket-app
+  template:
+    metadata:
+      labels:
+        app: cardmarket-app
+    spec:
+      containers:
+        - name: cardmarket-app
+          image: lekelee/simple-k8s-node-app:v1.0.0
+          ports:
+            - containerPort: 8080
+        

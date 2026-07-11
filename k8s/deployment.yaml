@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: cardmarket-app
-          image: lekelee/simple-k8s-node-app:v1.0.0
+          image: lekelee/simple-k8s-node-app:6a1a33ea46f63a2c3896a3baf5ce67cd47739b06
           ports:
             - containerPort: 8080
         

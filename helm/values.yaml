@@ -1,0 +1,17 @@
+namespace: cardmarket
+
+replicaCount: 1
+
+image:
+  repository: lekelee/simple-k8s-node-app
+  tag: 6a1a33ea46f63a2c3896a3baf5ce67cd47739b06
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8080
+
+ingress:
+  className: nginx
+  host: cardmarket.local

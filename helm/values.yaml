@@ -4,7 +4,7 @@ replicaCount: 1
 
 image:
   repository: lekelee/simple-k8s-node-app
-  tag: 6a1a33ea46f63a2c3896a3baf5ce67cd47739b06
+  tag: "8acf1e48d6b928275c52af8eeef82628680a0ca5"
   pullPolicy: IfNotPresent
 
 service:

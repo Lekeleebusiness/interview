@@ -1,12 +1,9 @@
-name: CI for Cardmarket App
+name: Release Cardmarket App
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "app/**"
-      - ".github/workflows/**"
+  release:
+    types:
+      - published
 
 env:
   IMAGE_NAME: lekelee/simple-k8s-node-app
@@ -15,12 +12,29 @@ permissions:
   contents: write
 
 jobs:
-  build-and-push:
+  build-push-and-update-helm:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Extract release version
+        id: version
+        shell: bash
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid semantic version: $VERSION"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Release version: $VERSION"
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -31,17 +45,19 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
+            -t "${IMAGE_NAME}:${{ steps.version.outputs.version }}" \
             -t "${IMAGE_NAME}:${GITHUB_SHA}" \
             ./app
 
-      - name: Push Docker image
+      - name: Push Docker images
         run: |
+          docker push "${IMAGE_NAME}:${{ steps.version.outputs.version }}"
           docker push "${IMAGE_NAME}:${GITHUB_SHA}"
 
       - name: Update image tag in Helm values
         run: |
           sed -i \
-            "s|^[[:space:]]*tag:.*|  tag: \"${GITHUB_SHA}\"|" \
+            "s|^[[:space:]]*tag:.*|  tag: \"${{ steps.version.outputs.version }}\"|" \
             helm/values.yaml
 
           echo "Updated Helm values:"
@@ -50,7 +66,8 @@ jobs:
       - name: Commit and push updated image tag
         run: |
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add helm/values.yaml
 
@@ -59,5 +76,7 @@ jobs:
             exit 0
           fi
 
-          git commit -m "chore: deploy image ${GITHUB_SHA} [skip ci]"
-          git push
+          git commit -m \
+            "chore(deploy): update image to ${{ steps.version.outputs.version }} [skip ci]"
+
+          git push origin HEAD:main

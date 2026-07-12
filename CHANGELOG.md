@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.0](https://github.com/Lekeleebusiness/interview/compare/v1.2.0...v1.3.0) (2026-07-12)
+
+
+### Features
+
+* update readme ([1b661ee](https://github.com/Lekeleebusiness/interview/commit/1b661ee8d115363abd4d38eeaeb49840258969c8))
+* update readme ([d89b075](https://github.com/Lekeleebusiness/interview/commit/d89b075a93198e958400cea0cbdd20c71966a385))
+
 ## [1.2.0](https://github.com/Lekeleebusiness/interview/compare/v1.1.0...v1.2.0) (2026-07-12)
 
 

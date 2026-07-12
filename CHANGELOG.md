@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/Lekeleebusiness/interview/compare/v1.1.0...v1.2.0) (2026-07-12)
+
+
+### Features
+
+* review the bash script ([89839e9](https://github.com/Lekeleebusiness/interview/commit/89839e9ec6fcfe58bdd32618a35ab49e9249cba8))
+* review the bash script ([6b9d09e](https://github.com/Lekeleebusiness/interview/commit/6b9d09ed21384f255812c54bcdf7585eecf74a5e))
+
 ## [1.1.0](https://github.com/Lekeleebusiness/interview/compare/v1.0.1...v1.1.0) (2026-07-12)
 
 

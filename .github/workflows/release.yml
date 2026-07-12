@@ -1,70 +1,76 @@
-name: Release Cardmarket App
+name: Release Please
 
 on:
-  release:
-    types:
-      - published
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
 
 env:
   IMAGE_NAME: lekelee/simple-k8s-node-app
 
-permissions:
-  contents: write
-
 jobs:
-  build-push-and-update-helm:
+  release-please:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Run Release Please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: simple
+
       - name: Checkout repository
+        if: ${{ steps.release.outputs.release_created == 'true' }}
         uses: actions/checkout@v4
         with:
           ref: main
 
-      - name: Extract release version
-        id: version
-        shell: bash
-        run: |
-          VERSION="${{ github.event.release.tag_name }}"
-          VERSION="${VERSION#v}"
-
-          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
-            echo "Invalid semantic version: $VERSION"
-            exit 1
-          fi
-
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Release version: $VERSION"
-
       - name: Login to Docker Hub
+        if: ${{ steps.release.outputs.release_created == 'true' }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker image
+      - name: Build and push Docker image
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        env:
+          VERSION: ${{ steps.release.outputs.tag_name }}
         run: |
+          VERSION="${VERSION#v}"
+
           docker build \
-            -t "${IMAGE_NAME}:${{ steps.version.outputs.version }}" \
+            -t "${IMAGE_NAME}:${VERSION}" \
             -t "${IMAGE_NAME}:${GITHUB_SHA}" \
             ./app
 
-      - name: Push Docker images
-        run: |
-          docker push "${IMAGE_NAME}:${{ steps.version.outputs.version }}"
+          docker push "${IMAGE_NAME}:${VERSION}"
           docker push "${IMAGE_NAME}:${GITHUB_SHA}"
 
       - name: Update image tag in Helm values
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        env:
+          VERSION: ${{ steps.release.outputs.tag_name }}
         run: |
+          VERSION="${VERSION#v}"
+
           sed -i \
-            "s|^[[:space:]]*tag:.*|  tag: \"${{ steps.version.outputs.version }}\"|" \
+            "s|^[[:space:]]*tag:.*|  tag: \"${VERSION}\"|" \
             helm/values.yaml
 
-          echo "Updated Helm values:"
           grep -A 3 '^image:' helm/values.yaml
 
-      - name: Commit and push updated image tag
+      - name: Commit Helm image update
+        if: ${{ steps.release.outputs.release_created == 'true' }}
+        env:
+          VERSION: ${{ steps.release.outputs.tag_name }}
         run: |
+          VERSION="${VERSION#v}"
+
           git config user.name "github-actions[bot]"
           git config user.email \
             "41898282+github-actions[bot]@users.noreply.github.com"
@@ -76,7 +82,5 @@ jobs:
             exit 0
           fi
 
-          git commit -m \
-            "chore(deploy): update image to ${{ steps.version.outputs.version }} [skip ci]"
-
+          git commit -m "chore(deploy): update image to ${VERSION}"
           git push origin HEAD:main

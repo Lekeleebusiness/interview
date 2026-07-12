@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0](https://github.com/Lekeleebusiness/interview/compare/v1.0.1...v1.1.0) (2026-07-12)
+
+
+### Features
+
+* rename screenshot to be meaningful ([4081531](https://github.com/Lekeleebusiness/interview/commit/4081531c370850328d5e06b112f413f9b02a246c))
+* rename screenshot to be meaningful ([ad88720](https://github.com/Lekeleebusiness/interview/commit/ad887207d83a2ca045147faf88ea4e0684e59f51))
+
 ## [1.0.1](https://github.com/Lekeleebusiness/interview/compare/v1.0.0...v1.0.1) (2026-07-12)
 
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/Lekeleebusiness/interview/compare/v1.0.0...v1.0.1) (2026-07-12)
+
+
+### Bug Fixes
+
+* update workflow ([fc15c92](https://github.com/Lekeleebusiness/interview/commit/fc15c9212f457ded7a354a0273a685591cbdf450))
+* update workflow ([c5439fa](https://github.com/Lekeleebusiness/interview/commit/c5439fa10dda3959d3a33f0937d8a7e5b831d776))
+
 ## 1.0.0 (2026-07-12)
 
 
